@@ -1,5 +1,6 @@
 import pandas as pd
 
+#- functions to calculate the scores
 def avg(score):
     return round((score['H']) / score['AB'], 3)
 
@@ -14,6 +15,7 @@ def ops(score):
                 score['SF']) + (score['H'] + score['2B'] + score['3B']*2 + score['HR']*3) / score['AB'], 3)
 
 
+#- function to create a dataframe of scores and melting wide data to long data frame
 def calculate(filtSum, oppos):
     req_df = pd.DataFrame(index=filtSum.index)
     req_df['AVG'] = filtSum.apply(avg, axis=1)
@@ -28,6 +30,7 @@ def calculate(filtSum, oppos):
     return req_df_melt
 
 
+#- function to filter and sum the data with PA>=25
 def filterSum(pitchData, i):
     if i == 'HitterId':
         filt_df_l = pitchData[['HitterId','PA', 'AB', 'H', '2B', '3B', 'HR', 'BB', 'SF','HBP']][pitchData.PitcherSide =='L']
@@ -46,7 +49,7 @@ def filterSum(pitchData, i):
     filt_sum_r = filt_df_r.groupby(i).filter(lambda s: s.sum()['PA'] >= 25).groupby(i).sum()
     return filt_sum_l, filt_sum_r
         
-        
+#- main function and where rows are concatenated to form a csv file
 def main():
     pitchData = pd.read_csv('data/raw/pitchdata.csv') 
     Subject = ['HitterId', 'HitterTeamId', 'PitcherId', 'PitcherTeamId']
